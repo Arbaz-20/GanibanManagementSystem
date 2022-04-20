@@ -18,6 +18,7 @@ public class Manage_Income_Expenses extends javax.swing.JFrame {
 
     public Manage_Income_Expenses() {
         initComponents();
+        
         try {
             con = DriverManager.getConnection("jdbc:mysql://localhost/maintainance", "root", "roottoor");
 
@@ -36,6 +37,7 @@ public class Manage_Income_Expenses extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(Admin_MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         try {
             pstmt = con.prepareStatement("select * from expenses");
             ResultSet result = pstmt.executeQuery();
@@ -312,7 +314,7 @@ public class Manage_Income_Expenses extends javax.swing.JFrame {
             int rowCount = mytable.getRowCount();
             for (int i = rowCount - 1; i >= 0; i--) {
                 mytable.removeRow(i);
-                ResultSetMetaData rsdm = rs.getMetaData();
+                ResultSetMetaData rsmd = rs.getMetaData();
                 while (rs.next()) {
                     mytable.addRow(new Object[]{rs.getString("Sender"), rs.getString("Income_Mode"), rs.getString("Cheque_No"), rs.getString("Bank_Transaction"), rs.getString("Amount"), rs.getString("Discription")});
                 }
