@@ -19,8 +19,11 @@ public class Admin_Login extends javax.swing.JFrame {
         initComponents();
         try {
             con = DriverManager.getConnection("jdbc:mysql://localhost/maintainance", "root", "roottoor");
+            if(con == null){
+               JOptionPane.showMessageDialog(this,"Something went wrong");
+            }
         } catch (SQLException ex) {
-            Logger.getLogger(Admin_Login.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Admin_Login.class.getName()).log(Level.SEVERE, null,ex);
         }
     }
 
