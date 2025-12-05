@@ -1,5 +1,9 @@
 package com.styleattribute.ganiban_s;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -8,7 +12,7 @@ public class Main extends javax.swing.JFrame {
     public Main() {
         initComponents();
         //Database Tables 
-
+        createTables();
     }
 
     @SuppressWarnings("unchecked")
@@ -83,6 +87,106 @@ public class Main extends javax.swing.JFrame {
         new User_login().setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    /**
+     * Veritabanı tablolarını otomatik olarak oluşturur.
+     * database_schema.sql dosyasındaki tüm CREATE TABLE sorgularını çalıştırır.
+     */
+    private void createTables() {
+        Connection con = null;
+        Statement stmt = null;
+        
+        try {
+            // Veritabanı bağlantısı
+            con = DriverManager.getConnection("jdbc:mysql://localhost/maintainance", "root", "roottoor");
+            stmt = con.createStatement();
+            
+            // 1. Admin Tablosu
+            String createAdminTable = "CREATE TABLE IF NOT EXISTS admin ("
+                    + "login_ID VARCHAR(50) PRIMARY KEY,"
+                    + "password VARCHAR(50) NOT NULL"
+                    + ")";
+            stmt.executeUpdate(createAdminTable);
+            
+            // 2. Users Tablosu
+            String createUsersTable = "CREATE TABLE IF NOT EXISTS users ("
+                    + "id INT AUTO_INCREMENT PRIMARY KEY,"
+                    + "Login_ID VARCHAR(50) NOT NULL,"
+                    + "password VARCHAR(50) NOT NULL"
+                    + ")";
+            stmt.executeUpdate(createUsersTable);
+            
+            // 3. Customers Details Tablosu
+            String createCustomersTable = "CREATE TABLE IF NOT EXISTS customers_details ("
+                    + "Flat_No VARCHAR(50) PRIMARY KEY,"
+                    + "Floor_No VARCHAR(10) NOT NULL,"
+                    + "Building_Wing VARCHAR(10) NOT NULL,"
+                    + "Flat_Status VARCHAR(20) NOT NULL,"
+                    + "Name_of_the_Owner VARCHAR(100) NOT NULL,"
+                    + "Name_of_the_Renter VARCHAR(100),"
+                    + "Mobile_Number VARCHAR(15)"
+                    + ")";
+            stmt.executeUpdate(createCustomersTable);
+            
+            // 4. Billing Tablosu
+            String createBillingTable = "CREATE TABLE IF NOT EXISTS billing ("
+                    + "Reciept_no VARCHAR(20) PRIMARY KEY,"
+                    + "Date VARCHAR(20) NOT NULL,"
+                    + "Name VARCHAR(100) NOT NULL,"
+                    + "Building_Wing VARCHAR(10) NOT NULL,"
+                    + "Flat_No_or_Shop_No VARCHAR(50) NOT NULL,"
+                    + "Rupees VARCHAR(20) NOT NULL,"
+                    + "Only_Rupees_inwords VARCHAR(500),"
+                    + "From_month VARCHAR(20),"
+                    + "to_month VARCHAR(20),"
+                    + "Maintainance_Charges VARCHAR(20),"
+                    + "Total VARCHAR(20) NOT NULL"
+                    + ")";
+            stmt.executeUpdate(createBillingTable);
+            
+            // 5. Income Tablosu
+            String createIncomeTable = "CREATE TABLE IF NOT EXISTS income ("
+                    + "ID VARCHAR(20) PRIMARY KEY,"
+                    + "Date VARCHAR(20) NOT NULL,"
+                    + "Sender VARCHAR(100) NOT NULL,"
+                    + "Income_Mode VARCHAR(50) NOT NULL,"
+                    + "Cheque_No VARCHAR(50),"
+                    + "Bank_Transaction VARCHAR(50),"
+                    + "Amount VARCHAR(20) NOT NULL,"
+                    + "Discription TEXT NOT NULL"
+                    + ")";
+            stmt.executeUpdate(createIncomeTable);
+            
+            // 6. Expenses Tablosu
+            String createExpensesTable = "CREATE TABLE IF NOT EXISTS expenses ("
+                    + "ID VARCHAR(20) PRIMARY KEY,"
+                    + "Date VARCHAR(20) NOT NULL,"
+                    + "Reciever VARCHAR(100) NOT NULL,"
+                    + "Expense_Mode VARCHAR(50) NOT NULL,"
+                    + "Cheque_No VARCHAR(50),"
+                    + "Bank_Transaction VARCHAR(50),"
+                    + "Amount VARCHAR(20) NOT NULL,"
+                    + "Discription TEXT NOT NULL"
+                    + ")";
+            stmt.executeUpdate(createExpensesTable);
+            
+            Logger.getLogger(Main.class.getName()).log(Level.INFO, "Tüm veritabanı tabloları başarıyla oluşturuldu.");
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Veritabanı tabloları oluşturulurken hata oluştu: " + ex.getMessage(), ex);
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "Bağlantı kapatılırken hata oluştu: " + ex.getMessage(), ex);
+            }
+        }
+    }
 
     public static void main(String args[]) {
 
